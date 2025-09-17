@@ -1,6 +1,6 @@
 // Sales Controller - Business Logic Layer
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { erpNextApi, SalesOrder, StockBalance } from '../models/erpNextApi';
+import { erpNextApi, SalesOrder, StockBalance, KPIData } from '../models/erpNextApi';
 import { useToast } from '../hooks/use-toast';
 
 // Sales Order Hooks
@@ -79,18 +79,8 @@ export const useSalesFlow = () => {
 
 // Sales KPIs
 export const useSalesKPIs = () => {
-  return useQuery({
+  return useQuery<KPIData>({
     queryKey: ['salesKPIs'],
-    queryFn: async () => {
-      // TODO: Implement KPI calculations from ERPNext data
-      return {
-        totalRevenue: 125000,
-        totalOrders: 342,
-        pendingDeliveries: 23,
-        outstandingInvoices: 15,
-        conversionRate: 68.5,
-        averageOrderValue: 3650,
-      };
-    },
+    queryFn: erpNextApi.getKPIData.bind(erpNextApi),
   });
 };

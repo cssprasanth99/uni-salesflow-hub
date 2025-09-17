@@ -43,7 +43,7 @@ export const useQuickRetailCustomer = () => {
       customer_type: 'Individual' as const,
       territory: 'All Territories',
       customer_group: 'Individual',
-      phone,
+      mobile_no: phone,
     };
     
     createCustomer.mutate(customer);
