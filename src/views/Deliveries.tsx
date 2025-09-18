@@ -2,17 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Truck, Plus, Eye, Package, Clock, CheckCircle } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { erpNextApi } from '@/models/erpNextApi';
+import { useDeliveryNotes } from '@/controllers/salesController';
 import { useIndustryStore } from '@/state/industryStore';
 
 export function Deliveries() {
   const { mode } = useIndustryStore();
   
-  const { data: deliveries, isLoading } = useQuery({
-    queryKey: ['deliveryNotes'],
-    queryFn: erpNextApi.getDeliveryNotes.bind(erpNextApi),
-  });
+  const { data: deliveries, isLoading } = useDeliveryNotes();
 
   const getStatusColor = (status: string) => {
     switch (status) {

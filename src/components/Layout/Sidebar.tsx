@@ -21,6 +21,7 @@ import { useIndustryStore } from '@/state/industryStore';
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Customers', href: '/customers', icon: Users },
+  { name: 'Quotations', href: '/quotations', icon: FileText },
   { name: 'Items & Stock', href: '/items', icon: Package },
   { name: 'Sales Orders', href: '/orders', icon: ShoppingCart },
   { name: 'Deliveries', href: '/deliveries', icon: Truck },

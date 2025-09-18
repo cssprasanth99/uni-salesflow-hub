@@ -9,6 +9,7 @@ import { queryClient } from "@/state/queryClient";
 // Import Views
 import { Dashboard } from "@/views/Dashboard";
 import { Customers } from "@/views/Customers";
+import { Quotations } from "@/views/Quotations";
 import { Items } from "@/views/Items";
 import { Orders } from "@/views/Orders";
 import { Deliveries } from "@/views/Deliveries";
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/quotations" element={<Quotations />} />
             <Route path="/items" element={<Items />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/deliveries" element={<Deliveries />} />

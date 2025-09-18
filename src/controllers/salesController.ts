@@ -1,13 +1,46 @@
 // Sales Controller - Business Logic Layer
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { erpNextApi, SalesOrder, StockBalance, KPIData } from '../models/erpNextApi';
-import { useToast } from '../hooks/use-toast';
+import { mockApiService } from '@/models/mockApiService';
+import type { SalesOrder, StockBalance, KPIData, Quotation } from '@/models/types';
+import { useToast } from '@/hooks/use-toast';
 
-// Sales Order Hooks
+// ============= QUOTATIONS =============
+export const useQuotations = () => {
+  return useQuery({
+    queryKey: ['quotations'],
+    queryFn: mockApiService.getQuotations.bind(mockApiService),
+  });
+};
+
+export const useCreateQuotation = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: mockApiService.createQuotation.bind(mockApiService),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotations'] });
+      queryClient.invalidateQueries({ queryKey: ['salesKPIs'] });
+      toast({
+        title: "Success",
+        description: "Quotation created successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// ============= SALES ORDERS =============
 export const useSalesOrders = () => {
   return useQuery({
     queryKey: ['salesOrders'],
-    queryFn: erpNextApi.getSalesOrders.bind(erpNextApi),
+    queryFn: mockApiService.getSalesOrders.bind(mockApiService),
   });
 };
 
@@ -16,9 +49,10 @@ export const useCreateSalesOrder = () => {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: erpNextApi.createSalesOrder.bind(erpNextApi),
+    mutationFn: mockApiService.createSalesOrder.bind(mockApiService),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['salesOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['salesKPIs'] });
       toast({
         title: "Success",
         description: "Sales order created successfully",
@@ -34,39 +68,118 @@ export const useCreateSalesOrder = () => {
   });
 };
 
-// Stock Validation
+// ============= DELIVERY NOTES =============
+export const useDeliveryNotes = () => {
+  return useQuery({
+    queryKey: ['deliveryNotes'],
+    queryFn: mockApiService.getDeliveryNotes.bind(mockApiService),
+  });
+};
+
+export const useCreateDeliveryNote = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: mockApiService.createDeliveryNote.bind(mockApiService),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deliveryNotes'] });
+      queryClient.invalidateQueries({ queryKey: ['salesKPIs'] });
+      toast({
+        title: "Success",
+        description: "Delivery note created successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// ============= SALES INVOICES =============
+export const useSalesInvoices = () => {
+  return useQuery({
+    queryKey: ['salesInvoices'],
+    queryFn: mockApiService.getSalesInvoices.bind(mockApiService),
+  });
+};
+
+export const useCreateSalesInvoice = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: mockApiService.createSalesInvoice.bind(mockApiService),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['salesInvoices'] });
+      queryClient.invalidateQueries({ queryKey: ['salesKPIs'] });
+      toast({
+        title: "Success",
+        description: "Sales invoice created successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// ============= PAYMENT ENTRIES =============
+export const usePaymentEntries = () => {
+  return useQuery({
+    queryKey: ['paymentEntries'],
+    queryFn: mockApiService.getPaymentEntries.bind(mockApiService),
+  });
+};
+
+export const useCreatePaymentEntry = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: mockApiService.createPaymentEntry.bind(mockApiService),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paymentEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['salesKPIs'] });
+      toast({
+        title: "Success",
+        description: "Payment entry created successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// ============= STOCK VALIDATION =============
 export const useStockValidation = (itemCode: string, warehouse?: string) => {
   return useQuery({
     queryKey: ['stockBalance', itemCode, warehouse],
-    queryFn: () => erpNextApi.getStockBalance(itemCode, warehouse),
+    queryFn: () => mockApiService.getStockBalance(itemCode, warehouse),
     enabled: !!itemCode,
   });
 };
 
-// Sales Flow State Management
+// ============= SALES FLOW =============
 export const useSalesFlow = () => {
+  const quotations = useQuotations();
   const salesOrders = useSalesOrders();
-  
-  // Mock data for demo - replace with real queries
-  const quotations = useQuery({
-    queryKey: ['quotations'],
-    queryFn: async () => [], // TODO: Implement quotation API
-  });
-  
-  const deliveryNotes = useQuery({
-    queryKey: ['deliveryNotes'],
-    queryFn: erpNextApi.getDeliveryNotes.bind(erpNextApi),
-  });
-  
-  const salesInvoices = useQuery({
-    queryKey: ['salesInvoices'],
-    queryFn: erpNextApi.getSalesInvoices.bind(erpNextApi),
-  });
-  
-  const paymentEntries = useQuery({
-    queryKey: ['paymentEntries'],
-    queryFn: erpNextApi.getPaymentEntries.bind(erpNextApi),
-  });
+  const deliveryNotes = useDeliveryNotes();
+  const salesInvoices = useSalesInvoices();
+  const paymentEntries = usePaymentEntries();
   
   return {
     quotations,
@@ -77,10 +190,10 @@ export const useSalesFlow = () => {
   };
 };
 
-// Sales KPIs
+// ============= SALES KPIs =============
 export const useSalesKPIs = () => {
   return useQuery<KPIData>({
     queryKey: ['salesKPIs'],
-    queryFn: erpNextApi.getKPIData.bind(erpNextApi),
+    queryFn: mockApiService.getKPIData.bind(mockApiService),
   });
 };
