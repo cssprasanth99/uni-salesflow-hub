@@ -16,7 +16,7 @@ export const useCreateCustomer = () => {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: mockApiService.createCustomer.bind(mockApiService),
+    mutationFn: (customer: Omit<Customer, 'name'>) => mockApiService.createCustomer(customer),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
       toast({
@@ -39,7 +39,7 @@ export const useUpdateCustomer = () => {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: ({ name, updates }: { name: string; updates: any }) => 
+    mutationFn: ({ name, updates }: { name: string; updates: Partial<Customer> }) => 
       mockApiService.updateCustomer(name, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
@@ -63,7 +63,7 @@ export const useDeleteCustomer = () => {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: mockApiService.deleteCustomer.bind(mockApiService),
+    mutationFn: (name: string) => mockApiService.deleteCustomer(name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
       toast({
@@ -86,9 +86,9 @@ export const useQuickRetailCustomer = () => {
   const createCustomer = useCreateCustomer();
   
   const createQuickCustomer = (name: string, phone?: string) => {
-    const customer = {
+    const customer: Omit<Customer, 'name'> = {
       customer_name: name,
-      customer_type: 'Individual' as const,
+      customer_type: 'Individual',
       territory: 'All Territories',
       customer_group: 'Individual',
       contact_phone: phone,
